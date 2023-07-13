@@ -1,26 +1,37 @@
-import { Player } from "."
+import { Player, SpellAttack, SwordAttack } from "."
 
 describe("Player tests", () => {
     let player: Player
 
-    beforeAll(() => { // Before each "it" test, start with a new Player instance
+    beforeEach(() => { // Before each "it" test, start with a new Player instance
         player = new Player()
     })
 
-    it("should not use invalid attacks", () => {
-        const result = player.takeHit('banana')
-        expect(result).toEqual('Not a valid attack!')
-    })
-
-    it("should reduce the players health on successful hits", () => {
+    it("should reduce the players health on successful sword hits", () => {
         let result
 
         do {
-            result = player.takeHit('sword')
-        } while (result.includes('missed'))
+            result = player.takeHit(new SwordAttack)
+        } while (result.includes('sword attack missed'))
 
         expect(player.health).toBeLessThan(52)
-        expect(result).toContain('The attack hit')
+        expect(result).toContain('The sword attack hit')
+
+        const extractedNumbers = result.match(/^\d+|\d+\b|\d+(?=\w)/g) // extract the numbers from the result
+        if (extractedNumbers !== null) {
+            expect(52 - Number(extractedNumbers[0])).toEqual(Number(extractedNumbers[1]))
+        }
+    })
+
+    it("should reduce the players health on successful spell hits", () => {
+        let result
+
+        do {
+            result = player.takeHit(new SpellAttack('fire'))
+        } while (result.includes('fire attack missed'))
+
+        expect(player.health).toBeLessThan(52)
+        expect(result).toContain('The fire attack hit')
 
         const extractedNumbers = result.match(/^\d+|\d+\b|\d+(?=\w)/g) // extract the numbers from the result
         if (extractedNumbers !== null) {
