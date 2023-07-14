@@ -4,11 +4,7 @@ interface Attack {
 }
 
 export class SpellAttack implements Attack {
-    private _element: string
-
-    constructor(element: string) {
-        this._element = element
-    }
+    constructor(private _element: string) {}
 
     get type(): string {
         return this._element
